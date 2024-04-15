@@ -410,7 +410,7 @@ class App(FirebaseAuthenticator, RealtimeDB):
                     # Verify the password when the user first enters it
                     if self.verify_password(password):
                         st.warning(
-                            "Are you sure you want to delete your account? This action cannot be undone!"
+                            "Are you sure you want to delete your account? This action cannot be undone! If you are sure, please retype your password and click the button again."
                         )
                         st.session_state.delete_account_warning_shown = True
                     else:
