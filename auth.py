@@ -394,7 +394,7 @@ class FirebaseAuthenticator(Credentials):
             }:
                 st.session_state.auth_warning = f"""
                 ##### Error: Invalid login credentials.
-                error_message {error_message}
+                - You have to enter your password again to delete your account.
                 - Please check your password.
                 - Use the password you used to sign in.
                 - Forgot your password?
@@ -422,3 +422,45 @@ class FirebaseAuthenticator(Credentials):
                 st.session_state.auth_warning = f"Error: {error_message}"
         except Exception as error:
             st.session_state.auth_warning = f"Error: {error}"
+
+    def verify_password(self, password: str) -> bool:
+        """
+        Verifies the password against the user's password.
+
+        Args:
+            password (str): The password to verify.
+
+        Returns:
+            bool: True if the password matches the user's password, False otherwise.
+        """
+        try:
+            id_token = st.session_state.user_info["idToken"]
+            self.sign_in_with_email_and_password(
+                st.session_state.user_info["email"], password
+            )
+            return True
+        except requests.exceptions.HTTPError as error:
+            error_message = json.loads(error.args[1])["error"]["message"]
+            if error_message in {
+                "INVALID_EMAIL",
+                "EMAIL_NOT_FOUND",
+                "INVALID_PASSWORD",
+                "MISSING_PASSWORD",
+                "INVALID_LOGIN_CREDENTIALS",
+            }:
+                return False
+            elif any(
+                re.search(pattern, error_message, re.IGNORECASE)
+                for pattern in {
+                    "TOO_MANY_ATTEMPTS_TRY_LATER",
+                    "USER_DISABLED",
+                    "OPERATION_NOT_ALLOWED",
+                    "USER_NOT_FOUND",
+                    "TOO_MANY_ATTEMPTS_TRY_LATER : Too many unsuccessful login attempts. Please try again later.",
+                }
+            ):
+                return False
+            else:
+                return False
+        except Exception as error:
+            return False

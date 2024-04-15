@@ -390,23 +390,31 @@ class App(FirebaseAuthenticator, RealtimeDB):
             submit_button = st.form_submit_button(label="**Confirm Delete Account**")
             if submit_button:
                 if st.session_state.get("delete_account_warning_shown", False):
-                    with st.spinner("Deleting account"):
-                        self.delete_account(password)
-                    if "auth_success" in st.session_state:
-                        st.success(st.session_state.auth_success)
-                        del st.session_state.auth_success
-                        time.sleep(2)
-                        st.rerun()
-                    elif "auth_warning" in st.session_state:
-                        st.error(st.session_state.auth_warning)
-                        del st.session_state.auth_warning
-                    st.session_state.delete_account_clicked = False
-                    st.session_state.delete_account_warning_shown = False
+                    # Verify the password again before deleting the account
+                    if self.verify_password(password):
+                        with st.spinner("Deleting account"):
+                            self.delete_account(password)
+                        if "auth_success" in st.session_state:
+                            st.success(st.session_state.auth_success)
+                            del st.session_state.auth_success
+                            time.sleep(2)
+                            st.rerun()
+                        elif "auth_warning" in st.session_state:
+                            st.error(st.session_state.auth_warning)
+                            del st.session_state.auth_warning
+                        st.session_state.delete_account_clicked = False
+                        st.session_state.delete_account_warning_shown = False
+                    else:
+                        st.error("""Incorrect password, or too many attempts. Please try again.""")
                 else:
-                    st.warning(
-                        "Are you sure you want to delete your account? This action cannot be undone!"
-                    )
-                    st.session_state.delete_account_warning_shown = True
+                    # Verify the password when the user first enters it
+                    if self.verify_password(password):
+                        st.warning(
+                            "Are you sure you want to delete your account? This action cannot be undone!"
+                        )
+                        st.session_state.delete_account_warning_shown = True
+                    else:
+                        st.error("Incorrect password. Please try again.")
         with st.form(key="Reset", clear_on_submit=True):
             st.subheader("Reset Password:")
             st.info(
