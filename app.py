@@ -230,8 +230,8 @@ class App(FirebaseAuthenticator, RealtimeDB):
         st.sidebar.info(
             """
             # About
-            - Team: [**_Elshad Sabziyev_**](github.com/elshadsabziyev), [**_Elvin Mammadov_**](mailto:elvin.mammadov.std@bhos.edu.az), and [**_Arif Najafov_**](mailto:arif.najafov.std@bhos.edu.az)
-            - The source code for Dashboard is available on [**_GitHub_**](https://github.com/elshadsabziyev/Agribot365).
+            - Team: [**_Elshad Sabziyev_**](github.com/elshadsabziyev), [**_Elvin Mammadov_**](github.com/elvinmammadov), and [**_Arif Najafov_**](github.com/arifnajafov).
+            - The source code for Dashboard is available on [**_GitHub_**](https://github.com/elshadsabziyev/AgribotDashboard).
             """
         )
 
