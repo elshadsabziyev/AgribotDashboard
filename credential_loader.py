@@ -22,10 +22,34 @@ class Credentials:
     """
 
     def __init__(self) -> None:
-        self.firebase_cert = self.make_firebase_cert()
-        self.firebase_config = self.get_firebase_config()
-        self.openai_credentials = self.get_openai_credentials()
-        self.db_url = st.secrets["firebase_config"]["databaseURL"]
+        try:
+            self.firebase_cert = self.make_firebase_cert()
+        except KeyError:
+            pass
+        try:
+            self.firebase_config = self.get_firebase_config()
+        except KeyError:
+            st.error(
+                """
+                # There was an error retrieving the Firebase configuration.
+                - Please check the secrets file.
+                - If the problem persists, please contact the developer.
+                """
+            )
+        try:
+            self.openai_credentials = self.get_openai_credentials()
+        except KeyError:
+            pass
+        try:
+            self.db_url = st.secrets["firebase_config"]["databaseURL"]
+        except KeyError:
+            st.error(
+                """
+                # There was an error retrieving the Firebase database URL.
+                - Please check the secrets file.
+                - If the problem persists, please contact the developer.
+                """
+            )
 
     def make_firebase_cert(self) -> credentials.Certificate:
         """
