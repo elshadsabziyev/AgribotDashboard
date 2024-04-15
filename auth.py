@@ -394,7 +394,7 @@ class FirebaseAuthenticator(Credentials):
             }:
                 st.session_state.auth_warning = f"""
                 ##### Error: Invalid login credentials.
-                email: {st.session_state.user_info["email"]}
+                error_message {error_message}
                 - Please check your password.
                 - Use the password you used to sign in.
                 - Forgot your password?
